@@ -31,13 +31,10 @@ export class HomePage {
   }
 
   public login(){
-    console.log(this.credenciais);
     this.auth.authenticate(this.credenciais).subscribe(response => {
-      console.log(response.headers.get("Authorization"));
+      this.auth.successfulLogin(response.headers.get("Authorization"));
       this.navCtrl.setRoot("CategoriasPage");
-    }, error => {
-
-    });
+    }, error => {});
   }
 
 }
