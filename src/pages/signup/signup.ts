@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CidadeService } from '../../services/domain/cidade.service';
 import { EstadoService } from '../../services/domain/estado.service';
 import { EstadoDTO } from '../../models/estado.dto';
 import { CidadeDTO } from '../../models/cidade.dto';
+import { ClienteService } from '../../services/domain/cliente.service';
 
 /**
  * Generated class for the SignupPage page.
@@ -29,7 +30,9 @@ export class SignupPage {
     public navParams: NavParams,
     public formBuilder: FormBuilder,
     public cidadeService: CidadeService,
-    public estadoService: EstadoService) {
+    public estadoService: EstadoService,
+    public clienteService: ClienteService,
+    public alert: AlertController) {
     this.formGroup = this.formBuilder.group({
         nome: ['Joaquim', [Validators.required, Validators.minLength(5), Validators.maxLength(120)]],
         email: ['joaquim@gmail.com', [Validators.required, Validators.email]],
@@ -44,15 +47,15 @@ export class SignupPage {
         telefone1 : ['977261827', [Validators.required]],
         telefone2 : ['', []],
         telefone3 : ['', []],
-        estadoId : [null, [Validators.required]],
-        cidadeId : [null, [Validators.required]]   
+        estado : [null, [Validators.required]],
+        cidade: [null, [Validators.required]]   
       });
   }
 
   ionViewDidLoad(){
     this.estadoService.findAll().subscribe(response => {
         this.estados = response;
-        this.formGroup.controls.estadoId.setValue(this.estados[0].id);
+        this.formGroup.controls.estado.setValue(this.estados[0].id);
         this.updateCidades();
      },
      error => {}
@@ -60,17 +63,40 @@ export class SignupPage {
   }
 
   updateCidades(){
-    let estado_id = this.formGroup.value.estadoId;
+    let estado_id = this.formGroup.value.estado;
     this.cidadeService.findAll(estado_id).subscribe(
       response => {
         this.cidades = response;
-        this.formGroup.controls.cidadeId.setValue(null);
+        this.formGroup.controls.cidade.setValue(null);
       },
       error => {}
     );
   }
 
   signupUser(){
+    console.log(this.formGroup.valid);
+    this.clienteService.insert(this.formGroup.value).subscribe(
+      response => {
+        this.showInsertOk();
+      },
+      error => {}
+    )
+  }
 
+  showInsertOk(): any {
+    let alert = this.alert.create({
+      title:  'Success',
+      message: "You're signed up successfully",
+      enableBackdropDismiss: false,
+      buttons: [
+        {
+          text: 'OK',
+          handler: () =>{
+            this.navCtrl.pop();
+          }
+        }
+      ]
+    });
+    alert.present();
   }
 }
