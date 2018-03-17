@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ProdutoDTO } from '../../models/produto.dto';
 import { ProdutoService } from '../../services/domain/produto.service';
+import { API_CONFIG } from '../../config/api.config';
 
 /**
  * Generated class for the ProdutosPage page.
@@ -26,17 +27,22 @@ export class ProdutosPage {
     this.produtoService.findByCategoria(this.navParams.get("categoria_id")).subscribe(
       response => {
         this.items = response['content'];
+        this.getSmallImageIfExists();
       },
       error =>{}
     );
+  }
 
-    this.items = [
-      {
-        id: "1",
-        nome: "mouse",
-        preco: 15.50
-      }
-    ]
+  public getSmallImageIfExists(){
+    for(var i = 0; i < this.items.length; i++){
+      let item = this.items[i];
+      this.produtoService.getSmallImageFromBucket(item.id).subscribe(
+        response => {
+          item.imageUrl = `${API_CONFIG.bucketBaseUrl}/prod${item.id}-small.jpg`
+        },
+        error => {}
+      );
+    }
   }
 
 }
