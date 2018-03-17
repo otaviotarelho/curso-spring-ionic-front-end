@@ -26,5 +26,5 @@
           <p text-center>{{item?.preco | currency}}</p>
         </ion-card-content>
     </ion-card>
-    <button ion-button block outline>Add to cart</button>
+    <button ion-button block outline (click)="addToCart(item)">Add to cart</button>
 </ion-content>
