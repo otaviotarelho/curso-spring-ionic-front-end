@@ -5,6 +5,6 @@ import { ItemPedidoDTO } from "./itempedido.dto";
 export interface PedidoDTO {
     cliente: RefDTO,
     enderecoDeEntrega: RefDTO,
-    pagemento: PagamentoDTO,
+    pagamento: PagamentoDTO,
     itens: ItemPedidoDTO[]
 }
